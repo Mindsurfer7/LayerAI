@@ -1,0 +1,27 @@
+# Виртуальное окружение
+venv/
+
+# SQLite база (локальная, временная)
+*.sqlite3
+
+# Python кеши
+__pycache__/
+*.py[cod]
+
+# Миграции, если ты хочешь их вручную отслеживать (можно не игнорить, но аккуратно)
+**/migrations/*.py
+!**/migrations/__init__.py
+
+# Файлы среды
+.env
+*.env
+
+# Mac / системный мусор
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# requirements lock-файлы от pip-tools, если не используешь
+*.txt~
