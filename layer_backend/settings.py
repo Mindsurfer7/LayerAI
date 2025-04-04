@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["178.88.34.26", "178.88.34.26", "193.93.122.13"]
 
+CORS_ALLOWED_ORIGINS = ["chrome-extension://ffkebakejecfdiokegfddljmnamemhjp"]
+
 
 # Application definition
 
