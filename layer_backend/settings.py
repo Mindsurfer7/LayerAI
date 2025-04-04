@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "rest_framework.authtoken",
+    "corsheaders",
     "djoser",
     "rest_framework",
     "users",
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -143,3 +145,5 @@ DJOSER = {
         "current_user": "users.serializers.UserSerializer",
     },
 }
+
+CORS_ALLOW_ALL_ORIGINS = True
