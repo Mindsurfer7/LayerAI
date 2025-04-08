@@ -1,6 +1,6 @@
-from django.http import StreamingHttpResponse
 import os
 import requests
+from django.http import StreamingHttpResponse
 
 AI_PROVIDERS = {
     "openai": {
@@ -44,4 +44,4 @@ def send_to_ai_provider(provider, model, messages, stream=False):
     if response.status_code != 200:
         raise Exception(f"{provider} error: {response.status_code} {response.text}")
 
-    return response.json()
+    return response.json()["choices"][0]["message"]["content"]

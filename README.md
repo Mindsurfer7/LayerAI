@@ -1,25 +1,8 @@
 
 
 python -m venv venv
-source venv/bin/activate
-
- python manage.py runserver  
-
- 
- <!-- 
-
- Flutter:
-    - overflow hidden
-    - scrollable 
-    - err visibility in login
-    
-
- Python:
-
-
-  -->
-  
-  
+source venv/bin/activate  
+python manage.py runserver    
 rm -rf venv
 python3 -m venv venv
 source venv/bin/activate

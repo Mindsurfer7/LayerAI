@@ -3,7 +3,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("auth/", include("djoser.urls")),  # регистрация, текущий пользователь и т.п.
-    path("auth/", include("djoser.urls.jwt")),  # JWT: login, refresh, verify
-    path("api/ai-chat/", include("ai_chat.urls")),  # <- наша ручка
+    path("auth/", include("djoser.urls")),
+    path("auth/", include("djoser.urls.jwt")),
+    path("api/v1/ai-chat/", include("ai_chat.urls")),
+    path("api/v1/memory/", include("memory.urls")),
 ]
