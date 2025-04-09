@@ -115,6 +115,18 @@ class ChatSessionCreateAPIView(generics.CreateAPIView):
         return Response({"id": session.id})
 
 
+class ChatSessionListAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        sessions = ChatSession.objects.filter(user=request.user)
+        data = [
+            {"id": session.id, "title": session.title or f"Чат {session.id}"}
+            for session in sessions
+        ]
+        return Response(data, status=status.HTTP_200_OK)
+
+
 class ChatMessageListAPIView(generics.ListAPIView):
     serializer_class = ChatMessageSerializer
     permission_classes = [permissions.IsAuthenticated]
