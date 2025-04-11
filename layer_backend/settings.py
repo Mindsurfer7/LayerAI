@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "users",
     "ai_chat",
     "memory",
+    # "corsheaders",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -132,6 +133,8 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# DEFAULT_CHARSET = 'utf-8'
+
 AUTH_USER_MODEL = "users.User"
 
 REST_FRAMEWORK = {
@@ -151,5 +154,5 @@ DJOSER = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-# CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
-# CORS_ALLOW_HEADERS = ['Authorization', 'Content-Type']
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+CORS_ALLOW_HEADERS = ["Authorization", "Content-Type"]

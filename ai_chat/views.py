@@ -1,13 +1,21 @@
+import json
 import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics, permissions
-
 from memory.models import UserMemory
 from .services import send_to_ai_provider
 from .models import ChatSession, Message
 from .serializers import ChatMessageSerializer
 from rest_framework.exceptions import NotFound
+from django.http import StreamingHttpResponse
+
+
+# user_facts = user.get_user_facts()
+# Или user.get_user_facts(category="interests") для фильтрации
+# f"Ранее известные факты: {json.dumps(user_facts, ensure_ascii=False)}\n"
+
+# THIS_SERVER_URL = os.getenv("THIS_SERVER_URL")
 
 
 class ChatProxyView(APIView):
@@ -21,6 +29,12 @@ class ChatProxyView(APIView):
         session_id = request.data.get("session_id")
 
         if not provider or not messages or not model or not session_id:
+            print("checking the error")
+            print(provider)
+            print(session_id)
+            print(messages)
+            print(model)
+
             return Response(
                 {"detail": "Missing fields"}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -28,6 +42,7 @@ class ChatProxyView(APIView):
         try:
             session = ChatSession.objects.get(id=session_id, user=request.user)
         except ChatSession.DoesNotExist:
+            print("no sesssion error")
             return Response(
                 {"detail": "Chat session not found"}, status=status.HTTP_404_NOT_FOUND
             )
@@ -41,28 +56,72 @@ class ChatProxyView(APIView):
             )
 
         try:
-            ai_response = send_to_ai_provider(provider, model, messages, stream)
+            ai_response = send_to_ai_provider(
+                provider, model, messages, request.user, stream
+            )
             self._trigger_memory_analysis(
                 request, session, messages, last_user_msg["content"]
             )
 
             if stream:
-                return ai_response
+                full_response = ""
+
+                def event_stream():
+                    nonlocal full_response
+                    for line in ai_response.iter_lines():
+                        if line:
+                            decoded_line = line.decode("utf-8")
+                            if decoded_line.startswith("data: "):
+                                data = decoded_line[6:]
+                                if data == "[DONE]":
+                                    yield f"data: {data}\n\n"
+                                    break
+                                try:
+                                    chunk_json = json.loads(data)
+                                    content = chunk_json["choices"][0]["delta"].get(
+                                        "content"
+                                    )
+                                    if content:
+                                        full_response += content
+                                        chunk_response = {
+                                            "choices": [{"delta": {"content": content}}]
+                                        }
+                                        yield f"data: {json.dumps(chunk_response)}\n\n"
+                                except (json.JSONDecodeError, KeyError) as e:
+                                    print(f"Error parsing chunk: {e}, chunk: {data}")
+
+                    if full_response:
+
+                        Message.objects.create(
+                            session=session,
+                            role="assistant",
+                            content=full_response,
+                        )
+
+                return StreamingHttpResponse(
+                    event_stream(), content_type="text/event-stream"
+                )
 
             Message.objects.create(
                 session=session,
                 role="assistant",
                 content=ai_response,
             )
+            print(ai_response)
+
             return Response({"choices": [{"message": {"content": ai_response}}]})
 
         except ValueError as e:
+            print(
+                ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> something gone wrong <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+            )
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response(
                 {"detail": "AI provider error", "error": str(e)}, status=500
             )
 
+    # а не надо ли вынести это в сервисы?
     def _trigger_memory_analysis(self, request, session, messages, new_message):
         # Собираем данные для анализа
         user = request.user
@@ -93,8 +152,10 @@ class ChatProxyView(APIView):
             "source_messages": source_message_ids,
         }
 
-        # Вызываем эндпоинт анализа памяти
-        analyze_url = "http://localhost:8000/api/v1/memory/analyze/"  # Замени на реальный URL, если нужно
+        analyze_url = (
+            "http://localhost:8000/api/v1/memory/analyze/"  # {THIS_SERVER_URL}
+        )
+
         try:
             response = requests.post(
                 analyze_url,
@@ -102,7 +163,6 @@ class ChatProxyView(APIView):
                 headers={"Content-Type": "application/json"},
             )
             response.raise_for_status()
-            print("Memory analysis result:", response.json())
         except requests.exceptions.RequestException as e:
             print(f"Error during memory analysis: {e}")
 
@@ -137,4 +197,6 @@ class ChatMessageListAPIView(generics.ListAPIView):
             session = ChatSession.objects.get(id=session_id, user=self.request.user)
         except ChatSession.DoesNotExist:
             raise NotFound("Chat session not found.")
-        return session.messages.order_by("timestamp")
+        sessionMessages = session.messages.order_by("timestamp")
+        print(sessionMessages)
+        return sessionMessages
