@@ -22,7 +22,13 @@ SECRET_KEY = "django-insecure-51_h2z=*+q*9iex5jz%q_^io4k*(z7@7&cdgvfdj=j5j%6*a&r
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ["178.88.34.26", "178.88.34.26", "193.93.122.13", "localhost"]
+ALLOWED_HOSTS = [
+    "178.88.34.26",
+    "178.88.34.26",
+    "193.93.122.13",
+    # "localhost",
+    # "10.0.2.2",
+]
 
 CORS_ALLOWED_ORIGINS = ["chrome-extension://ffkebakejecfdiokegfddljmnamemhjp"]
 
