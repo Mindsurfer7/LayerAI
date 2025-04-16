@@ -33,8 +33,10 @@ ALLOWED_HOSTS = [
 ]
 
 CHROME_EXT_KEY = os.getenv("CHROME_EXT_KEY")
-CORS_ALLOWED_ORIGINS = ["chrome-extension://caahdpajgciilcgnckgjjbmfehnciefe"]
-# CORS_ALLOWED_ORIGINS = ["chrome-extension://ffkebakejecfdiokegfddljmnamemhjp"]
+CORS_ALLOWED_ORIGINS = [
+    "chrome-extension://caahdpajgciilcgnckgjjbmfehnciefe",
+    "chrome-extension://ffkebakejecfdiokegfddljmnamemhjp",
+]
 
 
 # Application definition
