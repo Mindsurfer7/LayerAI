@@ -1,7 +1,8 @@
 import os
 import json
 import requests
-from django.http import StreamingHttpResponse
+
+# from django.http import StreamingHttpResponse
 
 AI_PROVIDERS = {
     "openai": {
@@ -51,17 +52,8 @@ def send_to_ai_provider(provider, model, messages, user=None, stream=False):
     print("-----------------------------")
     print(f"Status Code: {response.status_code}")
 
-    #  when using save to DB
     if stream:
         return response
-    if stream:
-
-        def event_stream():
-            for line in response.iter_lines():
-                if line:
-                    yield f"data: {line.decode('utf-8')}\n\n"
-
-        return StreamingHttpResponse(event_stream(), content_type="text/event-stream")
 
     if response.status_code != 200:
         raise Exception(f"{provider} error: {response.status_code} {response.text}")
@@ -69,7 +61,9 @@ def send_to_ai_provider(provider, model, messages, user=None, stream=False):
     return response.json()["choices"][0]["message"]["content"]
 
 
-# def event_stream():
+#  if stream:
+
+#         def event_stream():
 #             for line in response.iter_lines():
 #                 if line:
 #                     yield f"data: {line.decode('utf-8')}\n\n"

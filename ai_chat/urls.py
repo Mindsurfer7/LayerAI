@@ -5,6 +5,7 @@ from .views import (
     ChatMessageListAPIView,
     ChatSessionCreateAPIView,
     ChatSessionListAPIView,
+    TranscribeVoiceAPIView,
 )
 
 urlpatterns = [
@@ -16,4 +17,5 @@ urlpatterns = [
         name="chat-session-create",
     ),
     path("chat-sessions/", ChatSessionListAPIView.as_view(), name="chat-session-list"),
+    path("transcribe/", TranscribeVoiceAPIView.as_view(), name="transcribe"),
 ]
