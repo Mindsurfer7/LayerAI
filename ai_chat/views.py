@@ -155,9 +155,7 @@ class ChatProxyView(APIView):
             "source_messages": source_message_ids,
         }
 
-        analyze_url = (
-            "http://localhost:8000/api/v1/memory/analyze/"  # {THIS_SERVER_URL}
-        )
+        analyze_url = f"{os.getenv('THIS_SERVER_URL')}/api/v1/memory/analyze/"
 
         try:
             response = requests.post(

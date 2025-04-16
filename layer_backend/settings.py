@@ -12,13 +12,13 @@ MEDIA_URL = "/media/"
 # if
 # isDebugModeOn and isDebugModeOn
 # == False：
-# DEBUG = False
+DEBUG = False
 # else:
-DEBUG = True
+# DEBUG = True
 
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-51_h2z=*+q*9iex5jz%q_^io4k*(z7@7&cdgvfdj=j5j%6*a&r"
+# SECRET_KEY = "django-insecure-51_h2z=*+q*9iex5jz%q_^io4k*(z7@7&cdgvfdj=j5j%6*a&r"
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "fallback-dev-secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -30,6 +30,7 @@ ALLOWED_HOSTS = [
     # "10.0.2.2",
 ]
 
+CHROME_EXT_KEY = os.getenv("CHROME_EXT_KEY")
 CORS_ALLOWED_ORIGINS = ["chrome-extension://ffkebakejecfdiokegfddljmnamemhjp"]
 
 
@@ -155,7 +156,7 @@ DJOSER = {
     },
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 CORS_ALLOW_HEADERS = ["Authorization", "Content-Type"]
