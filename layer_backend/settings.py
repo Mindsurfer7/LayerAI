@@ -24,7 +24,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "fallback-dev-secret-key")
 
 ALLOWED_HOSTS = [
     "178.88.34.26",
-    "178.88.34.26",
+    "178.88.39.214",
     "193.93.122.13",
     # "localhost",
     # "10.0.2.2",
